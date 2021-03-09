@@ -10,7 +10,7 @@ package main
 
 import (
 	_ "github.com/godror/godror"
-	migrate "github.com/rubenv/sql-migrate"
+	migrate "github.com/cloudentity/sql-migrate"
 )
 
 func init() {

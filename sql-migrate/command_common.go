@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	migrate "github.com/rubenv/sql-migrate"
+	migrate "github.com/cloudentity/sql-migrate"
 )
 
 func ApplyMigrations(dir migrate.MigrationDirection, dryrun bool, limit int) error {
