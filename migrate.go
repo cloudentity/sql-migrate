@@ -2,6 +2,7 @@ package migrate
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -15,8 +16,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-gorp/gorp"
 	"github.com/rubenv/sql-migrate/sqlparse"
-	"gopkg.in/gorp.v1"
 )
 
 type MigrationDirection int
@@ -419,13 +420,13 @@ type SqlExecutor interface {
 // Execute a set of migrations
 //
 // Returns the number of applied migrations.
-func Exec(db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection) (int, error) {
-	return ExecMax(db, dialect, m, dir, 0)
+func Exec(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection) (int, error) {
+	return ExecMax(ctx, db, dialect, m, dir, 0)
 }
 
 // Returns the number of applied migrations.
-func (ms MigrationSet) Exec(db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection) (int, error) {
-	return ms.ExecMax(db, dialect, m, dir, 0)
+func (ms MigrationSet) Exec(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection) (int, error) {
+	return ms.ExecMax(ctx, db, dialect, m, dir, 0)
 }
 
 // Execute a set of migrations
@@ -433,16 +434,18 @@ func (ms MigrationSet) Exec(db *sql.DB, dialect string, m MigrationSource, dir M
 // Will apply at most `max` migrations. Pass 0 for no limit (or use Exec).
 //
 // Returns the number of applied migrations.
-func ExecMax(db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int) (int, error) {
-	return migSet.ExecMax(db, dialect, m, dir, max)
+func ExecMax(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int) (int, error) {
+	return migSet.ExecMax(ctx, db, dialect, m, dir, max)
 }
 
 // Returns the number of applied migrations.
-func (ms MigrationSet) ExecMax(db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int) (int, error) {
+func (ms MigrationSet) ExecMax(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int) (int, error) {
 	migrations, dbMap, err := ms.PlanMigration(db, dialect, m, dir, max)
 	if err != nil {
 		return 0, err
 	}
+
+	dbMap = dbMap.WithContext(ctx).(*gorp.DbMap)
 
 	// Apply migrations
 	applied := 0

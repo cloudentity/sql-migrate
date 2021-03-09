@@ -1,9 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/rubenv/sql-migrate"
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 func ApplyMigrations(dir migrate.MigrationDirection, dryrun bool, limit int) error {
@@ -31,7 +32,7 @@ func ApplyMigrations(dir migrate.MigrationDirection, dryrun bool, limit int) err
 			PrintMigration(m, dir)
 		}
 	} else {
-		n, err := migrate.ExecMax(db, dialect, source, dir, limit)
+		n, err := migrate.ExecMax(context.Background(), db, dialect, source, dir, limit)
 		if err != nil {
 			return fmt.Errorf("Migration failed: %s", err)
 		}
