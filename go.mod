@@ -3,19 +3,34 @@ module github.com/cloudentity/sql-migrate
 go 1.11
 
 require (
-	github.com/denisenkom/go-mssqldb v0.0.0-20191001013358-cfbb681360f0
+	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/armon/go-radix v1.0.0 // indirect
+	github.com/denisenkom/go-mssqldb v0.12.0
+	github.com/fatih/color v1.13.0 // indirect
 	github.com/go-gorp/gorp v2.2.0+incompatible
-	github.com/go-sql-driver/mysql v1.4.1
+	github.com/go-logfmt/logfmt v0.5.1 // indirect
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gobuffalo/packr/v2 v2.7.1
-	github.com/godror/godror v0.13.3
-	github.com/lib/pq v1.2.0
-	github.com/mattn/go-oci8 v0.0.7
-	github.com/mattn/go-sqlite3 v1.12.0
-	github.com/mitchellh/cli v1.0.0
-	github.com/olekukonko/tablewriter v0.0.2
+	github.com/godror/godror v0.30.2
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/lib/pq v1.10.4
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-oci8 v0.1.1
+	github.com/mattn/go-runewidth v0.0.13 // indirect
+	github.com/mattn/go-sqlite3 v1.14.11
+	github.com/mitchellh/cli v1.1.2
+	github.com/mitchellh/copystructure v1.2.0 // indirect
+	github.com/olekukonko/tablewriter v0.0.5
+	github.com/posener/complete v1.2.3 // indirect
+	github.com/poy/onpar v1.1.2 // indirect
 	github.com/ziutek/mymysql v1.5.4 // indirect
-	google.golang.org/appengine v1.6.5 // indirect
+	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838 // indirect
+	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127
 	gopkg.in/gorp.v1 v1.7.2
-	gopkg.in/yaml.v2 v2.2.5
+	gopkg.in/yaml.v2 v2.4.0
 )
