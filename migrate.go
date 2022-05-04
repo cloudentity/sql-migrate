@@ -420,13 +420,13 @@ type SqlExecutor interface {
 // Execute a set of migrations
 //
 // Returns the number of applied migrations.
-func Exec(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection) (int, error) {
-	return ExecMax(ctx, db, dialect, m, dir, 0)
+func Exec(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, timeout time.Duration) (int, error) {
+	return ExecMax(ctx, db, dialect, m, dir, 0, timeout)
 }
 
 // Returns the number of applied migrations.
-func (ms MigrationSet) Exec(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection) (int, error) {
-	return ms.ExecMax(ctx, db, dialect, m, dir, 0)
+func (ms MigrationSet) Exec(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, timeout time.Duration) (int, error) {
+	return ms.ExecMax(ctx, db, dialect, m, dir, 0, timeout)
 }
 
 // Execute a set of migrations
@@ -434,23 +434,24 @@ func (ms MigrationSet) Exec(ctx context.Context, db *sql.DB, dialect string, m M
 // Will apply at most `max` migrations. Pass 0 for no limit (or use Exec).
 //
 // Returns the number of applied migrations.
-func ExecMax(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int) (int, error) {
-	return migSet.ExecMax(ctx, db, dialect, m, dir, max)
+func ExecMax(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int, timeout time.Duration) (int, error) {
+	return migSet.ExecMax(ctx, db, dialect, m, dir, max, timeout)
 }
 
 // Returns the number of applied migrations.
-func (ms MigrationSet) ExecMax(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int) (int, error) {
+func (ms MigrationSet) ExecMax(ctx context.Context, db *sql.DB, dialect string, m MigrationSource, dir MigrationDirection, max int, timeout time.Duration) (int, error) {
 	migrations, dbMap, err := ms.PlanMigration(db, dialect, m, dir, max)
 	if err != nil {
 		return 0, err
 	}
 
-	dbMap = dbMap.WithContext(ctx).(*gorp.DbMap)
-
 	// Apply migrations
 	applied := 0
 	for _, migration := range migrations {
 		var executor SqlExecutor
+
+		mctx, cancel := context.WithTimeout(ctx, timeout)
+		dbMap = dbMap.WithContext(mctx).(*gorp.DbMap)
 
 		if migration.DisableTransaction {
 			executor = dbMap
@@ -510,6 +511,8 @@ func (ms MigrationSet) ExecMax(ctx context.Context, db *sql.DB, dialect string, 
 		}
 
 		applied++
+
+		cancel()
 	}
 
 	return applied, nil

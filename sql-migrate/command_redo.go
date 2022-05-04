@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"strings"
+	"time"
 
 	migrate "github.com/cloudentity/sql-migrate"
 )
@@ -73,13 +74,13 @@ func (c *RedoCommand) Run(args []string) int {
 		PrintMigration(migrations[0], migrate.Down)
 		PrintMigration(migrations[0], migrate.Up)
 	} else {
-		_, err := migrate.ExecMax(context.Background(), db, dialect, source, migrate.Down, 1)
+		_, err := migrate.ExecMax(context.Background(), db, dialect, source, migrate.Down, 1, time.Minute)
 		if err != nil {
 			ui.Error(fmt.Sprintf("Migration (down) failed: %s", err))
 			return 1
 		}
 
-		_, err = migrate.ExecMax(context.Background(), db, dialect, source, migrate.Up, 1)
+		_, err = migrate.ExecMax(context.Background(), db, dialect, source, migrate.Up, 1, time.Minute)
 		if err != nil {
 			ui.Error(fmt.Sprintf("Migration (up) failed: %s", err))
 			return 1

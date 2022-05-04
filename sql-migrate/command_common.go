@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
 	migrate "github.com/cloudentity/sql-migrate"
 )
@@ -32,7 +33,7 @@ func ApplyMigrations(dir migrate.MigrationDirection, dryrun bool, limit int) err
 			PrintMigration(m, dir)
 		}
 	} else {
-		n, err := migrate.ExecMax(context.Background(), db, dialect, source, dir, limit)
+		n, err := migrate.ExecMax(context.Background(), db, dialect, source, dir, limit, time.Minute)
 		if err != nil {
 			return fmt.Errorf("Migration failed: %s", err)
 		}
